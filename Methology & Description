@@ -1,0 +1,88 @@
+Methodology:
+The credit card fraud detection system will be developed using supervised machine learning algorithms. The dataset will be preprocessed to remove any missing or irrelevant data and to normalize the data. The preprocessed dataset will then be split into training and testing sets.
+The training set will be used to train the machine learning algorithms. We will experiment with different algorithms, such as decision trees, random forests, and neural networks, to determine which one performs best. Once the best-performing algorithm is identified, we will fine-tune its hyperparameters to improve its accuracy.
+The testing set will be used to evaluate the performance of the credit card fraud detection system. We will measure the system's accuracy, precision, recall, and F1 score to determine how well it performs. We will also use a confusion matrix to visualize the system's performance.
+Project Description:
+Importing dependencies and libraries:
+numpy:- to make arrays
+pandas:- to make data frames(structured tables) so that the data can be processed and analysed
+sklearn.model_selection:-import train_test_split to split the data into train dataset and test dataset
+sklearn.linear_model:- simply chose it to import logistic_regression_model for accuracy checks
+sklearn.metrics:- to import accuracy_score for performance checks
+
+Imported dataset using pandas dataframe
+printing first 5 rows of the dataset using 
+cc_data.head()
+Here the Principle Component Analysis method has been used in the dataset which has converted all features into numerical values from V1 to V28 which we have used for analysis and prediction. 
+Time is in seconds and it is the time elapsed after the previous transactions, Amount in USD, class tells whether the transaction is fraud or legit.
+0-Legit transaction
+1-Fraudulent transaction
+Printing last 5 rows of the dataset using:
+cc_data.tail()
+To know the information regarding the number of rows, columns, no. of entries, type of data stored, no. of missing values, no. of null and non-null values etc. We used:
+cc_data.info()
+For checking the number of missing values in each column we run:
+cc_data.isnull().sum()
+To handle missing values, we used the method of ‘Data Imputation’.
+Data Imputation is the in which alternative values are used in the place of missing data. This is of two types:
+Unit imputation: when replacing a data point 
+Item imputation – when replacing a constituent of a data point.
+For checking the distribution of legit and fraudulent transaction using class:
+cc_data['Class'].value_counts()
+Here we obtain that more than 99% of the data entries are legit.
+Since the no. of entries of legit transaction is a lot more than no. of fraudulent entries hence, we conclude that the dataset is an unbalanced dataset and the model can’t be fed with this data. If done so the it would certainly predict all the transactions as normal or legit. Hence, we bring data pre-processing into picture.
+Before this we are separating or splitting the data for easier analysis and make conclusions. 
+Now to know more about the amount transacted we obtain the statistical measures on the amount column like:
+legit.Amount.describe()
+
+ 
+ 
+Statistical parameters:
+Mean:- giving the mean value of the amount transacted
+Std: giving the standard deviation of the amount
+Min: the minimum amount transacted
+25%: the amount that has been transacted by 25% of the people
+50%: the amount that has been transacted by 50% of the people
+75%: the amount that has been transacted by 75% of the people
+
+One of the important insights we get from this analysis is that the mean amount transacted in fraudulent transaction is more than that of legit transaction.
+On comparing the values for both the transaction using:
+cc_data.groupby('Class').mean()
+
+We observe that there is a huge difference in the mean values of all the V’s which will help us in training our model and the machine would run according to the algorithm.
+Now coming onto data processing, to handle this unbalancing we use the method known as under sampling. In this we prepare a new dataset using the values from the old dataset. 
+Since we have 492 fraudulent transactions. So for having the best possible accuracy and most precise dataset, we have taken 492 random dataset values from 200000+ legit transactions. By this we can train our model to make the best prediction possible.
+legit_sample = legit.sample(n=492)
+
+now we concatenate the two dataframes of fraudulent and legit transactions and giving it the name new_dataset.
+new_dataset = pd.concat([legit_sample, fraud], axis=0)
+
+Here axis=0, implies the values will be added one by one i.e. the values of fraudulent transaction dataframe will be added below the legit transaction dataframe. Or in other words the data will be concatenated row-wise.
+We once again check for the mean values by running the command:
+new_dataset.groupby('Class').mean()
+
+On checking we get that the difference between the mean values of the fraudulent and legit transaction is almost similar to the previous ones and hence the dataset created is working similar to the actual dataset and is also balanced and is a good dataset.
+Now we are splitting the data into features and targets.
+Where features are the column names and targets are 0(legit transaction) and 1(fraudulent transaction). For this we have got two variables X and Y. 
+X to store the data other than class column and Y to store only the Class column
+X = new_dataset.drop(columns='Class', axis=1)
+Y = new_dataset['Class']
+
+Splitting the data into training and testing data
+Test_size= specifies the amount/proportion of data that is being taken into consideration.
+X_train- would store 80% of the data.
+X_test- would store the corresponding labels of that 80% of the data.
+Y_train- would store 20% of the data.
+Y_test- would store the corresponding labels of that 20% data .
+Stratify=Y will have an equal distribution of 0 and 1 in both train and test dataset.
+To fit the data into the logistic regression model we used the command:
+model.fit(X_train, Y_train)
+Now, we evaluate the data on the basis of the accuracy score of the X_train and X_test individually.
+On checking the accuracy score of X_train we get 0.94 that it a very good accuracy score.
+X_train_prediction = model.predict(X_train)
+training_data_accuracy = accuracy_score(X_train_prediction, Y_train)
+On checking the accuracy score of X_test we get 0.93 that it again a very good accuracy score.
+X_test_prediction = model.predict(X_test)
+test_data_accuracy = accuracy_score(X_test_prediction, Y_test)
+
+ 
